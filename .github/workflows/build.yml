@@ -9,7 +9,7 @@ jobs:
         run: |
           sudo chmod -R 777 .
           docker pull kivy/buildozer:latest
-          docker run --rm --user root -v ${{ github.workspace }}:/home/user/hostcwd -e BUILDOZER_ALLOW_ROOT=1 kivy/buildozer android debug
+          docker run --rm --user root -v ${{ github.workspace }}:/home/user/hostcwd -e BUILDOZER_ALLOW_ROOT=1 --entrypoint /bin/bash kivy/buildozer -c "yes | buildozer android debug"
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
