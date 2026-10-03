@@ -6,10 +6,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build APK
-        uses: ArtemSBulgakov/buildozer-action@v1
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
+        run: |
+          sudo chmod -R 777 .
+          docker pull kivy/buildozer
+          docker run --rm -v ${{ github.workspace }}:/home/user/hostcwd kivy/buildozer android debug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
