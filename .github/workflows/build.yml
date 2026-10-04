@@ -50,7 +50,7 @@ jobs:
           echo "24333f8a63b6825ea9c5514f83c1051866b9c4b2" >> ~/.android/licenses/android-sdk-license
       - name: Build APK
         run: |
-          rm -rf.buildozer bin __pycache__ ~/.buildozer
+          rm -rf .buildozer bin __pycache__ ~/.buildozer
           yes | buildozer android debug || true
           SDKMANAGER=$(find ~/.buildozer -name sdkmanager 2>/dev/null | head -n1)
           yes | $SDKMANAGER --licenses || true
