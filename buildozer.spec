@@ -10,7 +10,7 @@ orientation = portrait
 fullscreen = 0
 
 [buildozer]
-log_level = 2
+log_level = 1
 
 [app:android]
 android.api = 33
