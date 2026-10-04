@@ -13,6 +13,6 @@ android.ndk = 25b
 android.sdk = 33
 android.accept_sdk_license_agreements = True
 p4a.fork = kivy
-p4a.branch = 2024.08.16
+p4a.branch = v2024.01.21
 [buildozer]
 log_level = 2
