@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Clean old build
-        run: rm -rf.buildozer bin
+        run: rm -rf .buildozer bin
       - name: Build APK
         run: |
           sudo chmod -R 777 .
