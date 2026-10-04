@@ -12,7 +12,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Nuke Python 3.13/3.14 and fix cgi
+      - name: Nuke Python 3.13/3.14
         run: |
           sudo rm -rf /opt/hostedtoolcache/Python/3.14* /opt/hostedtoolcache/Python/3.13* || true
           sudo rm -f /usr/bin/python3.14 /usr/bin/python3.13 || true
@@ -33,7 +33,7 @@ jobs:
 
       - name: Build APK
         run: |
-          export SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           rm -rf $SDK_ROOT
           mkdir -p $SDK_ROOT/cmdline-tools $SDK_ROOT/licenses $SDK_ROOT/tools/bin
           cd /tmp
@@ -42,15 +42,11 @@ jobs:
           unzip -q cmdline-tools.zip
           mkdir -p $SDK_ROOT/cmdline-tools/latest
           mv cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ 2>/dev/null || true
-          cat > $SDK_ROOT/tools/bin/sdkmanager << 'EOF'
-          #!/bin/bash
-          exec $HOME/.[STRIPPED 74 bytes] "$@"
-          EOF
+          echo '#!/bin/bash' > $SDK_ROOT/tools/bin/sdkmanager
+          echo 'exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager "$@"' >> $SDK_ROOT/tools/bin/sdkmanager
           chmod +x $SDK_ROOT/tools/bin/sdkmanager
-          cat > $SDK_ROOT/tools/bin/avdmanager << 'EOF'
-          #!/bin/bash
-          exec $HOME/.[STRIPPED 74 bytes] "$@"
-          EOF
+          echo '#!/bin/bash' > $SDK_ROOT/tools/bin/avdmanager
+          echo 'exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/avdmanager "$@"' >> $SDK_ROOT/tools/bin/avdmanager
           chmod +x $SDK_ROOT/tools/bin/avdmanager
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $SDK_ROOT/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK_ROOT/licenses/android-sdk-license
@@ -59,9 +55,7 @@ jobs:
           export ANDROID_SDK_ROOT=$SDK_ROOT
           export ANDROID_HOME=$SDK_ROOT
           yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
-          unset ANDROID_HOME
-          unset ANDROID_SDK_ROOT
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;28.0.12433566" || true
           cd $GITHUB_WORKSPACE
           rm -rf .buildozer bin
           python3 -m buildozer -v android debug
