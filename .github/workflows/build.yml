@@ -24,7 +24,7 @@ jobs:
           python3 -m pip install buildozer==1.5.0 Cython==3.0.11
       - name: Build APK
         run: |
-          rm -rf.buildozer bin __pycache__
+          rm -rf .buildozer bin __pycache__
           SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           mkdir -p $SDK_ROOT/cmdline-tools $SDK_ROOT/tools/bin $SDK_ROOT/licenses
           cd /tmp
@@ -34,10 +34,10 @@ jobs:
           mkdir -p $SDK_ROOT/cmdline-tools/latest
           mv cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ || true
           echo '#!/bin/bash' > $SDK_ROOT/tools/bin/sdkmanager
-          echo 'exec $HOME/.[STRIPPED 74 bytes] "$@"' >> $SDK_ROOT/tools/bin/sdkmanager
+          echo 'exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager "$@"' >> $SDK_ROOT/tools/bin/sdkmanager
           chmod +x $SDK_ROOT/tools/bin/sdkmanager
           echo '#!/bin/bash' > $SDK_ROOT/tools/bin/avdmanager
-          echo 'exec $HOME/.[STRIPPED 74 bytes] "$@"' >> $SDK_ROOT/tools/bin/avdmanager
+          echo 'exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/avdmanager "$@"' >> $SDK_ROOT/tools/bin/avdmanager
           chmod +x $SDK_ROOT/tools/bin/avdmanager
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $SDK_ROOT/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK_ROOT/licenses/android-sdk-license
