@@ -22,7 +22,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install buildozer==1.5.0
-          pip install Cython==3.0.11
+          pip install Cython==0.29.33
 
       - name: Build APK
         run: |
@@ -43,8 +43,9 @@ jobs:
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK_ROOT/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea731b" > $SDK_ROOT/licenses/android-sdk-preview-license
           yes | sdkmanager --licenses || true
-          sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.2" "build-tools;37.0.0" || true
+          sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.2" "build-tools;34.0.0" || true
           cd $GITHUB_WORKSPACE
+          rm -rf .buildozer bin
           buildozer -v android debug
 
       - name: Upload APK
