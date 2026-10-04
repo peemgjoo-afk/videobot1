@@ -18,36 +18,31 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install buildozer==1.5.0
           pip install Cython==3.0.11
-          sudo apt-get update -qq
-          sudo apt-get install -y libffi-dev libssl-dev libbz2-dev
 
-      - name: Accept Android licenses
+      - name: Build APK
         run: |
-          yes | sdkmanager --licenses || true
+          rm -rf $HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd /tmp
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          mv cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          mv cmdline-tools/lib $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/ 2>/dev/null || true
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
-          cp $ANDROID_HOME/licenses/* $HOME/.buildozer/android/platform/android-sdk/licenses/ 2>/dev/null || true
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea731b" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-
-      - name: Build APK
-        env:
-          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-          ANDROID_HOME: /usr/local/lib/android/sdk
-        run: |
+          cd $GITHUB_WORKSPACE
           buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: bin/*.a
+          path: bin/*.apk
