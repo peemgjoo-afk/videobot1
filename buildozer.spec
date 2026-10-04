@@ -10,7 +10,7 @@ orientation = portrait
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
-android.sdk = 33
+android.sdk = 33 android.build_tools_version = 33.0.2
 android.accept_sdk_license_agreements = True
 p4a.fork = kivy
 p4a.branch = v2024.01.21
