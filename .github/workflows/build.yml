@@ -30,24 +30,38 @@ jobs:
           rm -rf $SDK_ROOT
           mkdir -p $SDK_ROOT/cmdline-tools
           mkdir -p $SDK_ROOT/licenses
+          mkdir -p $SDK_ROOT/tools/bin
           cd /tmp
+          rm -rf cmdline-tools
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
           unzip -q cmdline-tools.zip
           mkdir -p $SDK_ROOT/cmdline-tools/latest
-          mv cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ 2>/dev/null || mv cmdline-tools/cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ 2>/dev/null || true
-          mkdir -p $SDK_ROOT/cmdline-tools/latest/bin
-          mkdir -p $SDK_ROOT/tools/bin
-          cp -f $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager $SDK_ROOT/tools/bin/sdkmanager 2>/dev/null || true
-          cp -f $SDK_ROOT/cmdline-tools/latest/bin/avdmanager $SDK_ROOT/tools/bin/avdmanager 2>/dev/null || true
+          mv cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ 2>/dev/null || true
+          mv cmdline-tools/cmdline-tools/* $SDK_ROOT/cmdline-tools/latest/ 2>/dev/null || true
+          # FIX: Buildozer calls old path tools/bin/sdkmanager which fails with Java 17
+          # Make it a wrapper that calls new sdkmanager
+          cat > $SDK_ROOT/tools/bin/sdkmanager << 'EOF'
+          #!/bin/bash
+          exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager "$@"
+          EOF
+          chmod +x $SDK_ROOT/tools/bin/sdkmanager
+          cat > $SDK_ROOT/tools/bin/avdmanager << 'EOF'
+          #!/bin/bash
+          exec $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/avdmanager "$@"
+          EOF
+          chmod +x $SDK_ROOT/tools/bin/avdmanager
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $SDK_ROOT/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK_ROOT/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea731b" > $SDK_ROOT/licenses/android-sdk-preview-license
           export PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/tools/bin:$PATH
+          export ANDROID_SDK_ROOT=$SDK_ROOT
+          export ANDROID_HOME=$SDK_ROOT
           yes | sdkmanager --licenses || true
           sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
           unset ANDROID_HOME
           unset ANDROID_SDK_ROOT
           unset ANDROID_NDK_HOME
+          unset ANDROID_NDK_ROOT
           cd $GITHUB_WORKSPACE
           rm -rf .buildozer bin
           buildozer -v android debug
