@@ -40,7 +40,7 @@ jobs:
           yes | sdkmanager --licenses || true
           sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.2" "build-tools;34.0.0" || true
           cd $GITHUB_WORKSPACE
-          rm -rf.buildozer bin
+          rm -rf .buildozer bin
           buildozer -v android debug
       - name: Upload APK
         uses: actions/upload-artifact@v4
