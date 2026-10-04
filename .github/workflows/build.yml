@@ -9,22 +9,20 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk python3-pip python3-dev git zip unzip libssl-dev libffi-dev libsqlite3-dev autoconf automake libtool pkg-config
+          sudo apt install -y openjdk-17-jdk python3-pip git zip unzip libffi-dev libssl-dev
           pip3 install --upgrade pip
-          pip3 install buildozer Cython==0.29.36
+          pip3 install buildozer Cython
 
-      - name: Accept SDK licenses
+      - name: Accept licenses
         run: |
-          mkdir -p $HOME/.android
-          mkdir -p $HOME/.android/licenses
-          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.android/licenses/android-sdk-license
-          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $HOME/.android/licenses/android-sdk-license
-          echo "24333f8a63b6825ea9c5514f83c1059b8ea884" >> $HOME/.android/licenses/android-sdk-license
+          mkdir -p ~/.android/licenses
+          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
+          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.android/licenses/android-sdk-license
 
       - name: Build APK
         run: |
           rm -rf .buildozer bin
-          yes | buildozer android debug
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
