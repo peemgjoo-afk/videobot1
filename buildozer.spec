@@ -1,4 +1,4 @@
-app]
+[app]
 title = VideoBot
 package.name = videobot
 package.domain = com.videobot.app
